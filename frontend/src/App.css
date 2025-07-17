@@ -1,0 +1,345 @@
+/* src/App.css - CONSOLIDATED AND RESPONSIVE CONTENT FOR YOUR LEADERBOARD APP */
+
+body {
+    font-family: sans-serif;
+    /* FIX THIS PATH: Ensure 'assets/background_img.png' is correct relative to App.css */
+    /* Example if 'assets' is in 'src' folder: url('../assets/background_img.png') */
+    background-image: url('assets/background_img.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box; /* Important for consistent padding/sizing */
+}
+
+.app-container {
+    background-color: rgba(255, 255, 255, 0.15); /* Glassmorphism effect */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle white border */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Stronger shadow for depth */
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.user-section, .leaderboard-section {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.15); /* Glassmorphism for sections too */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"], select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    text-align: center;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-item span {
+    font-size: 1.1em;
+    color: #333;
+}
+
+.leaderboard-item .rank {
+    font-weight: bold;
+    color: #040405ff;
+    width: 40px;
+    text-align: center;
+}
+
+.leaderboard-item .name {
+    flex-grow: 1;
+}
+
+.leaderboard-item .points {
+    font-weight: bold;
+    color: #6a0dad;
+}
+
+/* --- TOP 3 USERS STYLING (CIRCULAR ALIGNMENT with text below) --- */
+.top-3 {
+    display: flex; /* Flex container for the three user wrappers */
+    justify-content: center; /* Center the group of wrappers horizontally */
+    align-items: flex-end; /* Align wrappers to the bottom, allowing Rank 1 to be elevated */
+    margin-bottom: 20px;
+    gap: 10px; /* Space between the three user wrappers */
+    padding-top: 50px; /* Provide space for Rank 1 elevation */
+    position: relative; /* For z-index on elevated wrapper */
+}
+
+/* Wrapper for each top user (card + name + points) */
+.top-user-wrapper {
+    display: flex; /* Make each wrapper a flex container */
+    flex-direction: column; /* Stack contents (circle, name, points) vertically */
+    align-items: center; /* Center items horizontally within the wrapper */
+    text-align: center; /* Ensures text inside is centered */
+    transition: transform 0.3s ease-in-out; /* Smooth transition for elevation */
+}
+
+/* Apply order to wrappers to control visual sequence (Rank 2 | Rank 1 | Rank 3) */
+.top-user-wrapper.rank-2-wrapper {
+    order: 1; /* First (left) */
+}
+
+.top-user-wrapper.rank-1-wrapper {
+    order: 2; /* Second (center) */
+    transform: translateY(-50px); /* Elevate Rank 1 wrapper */
+    z-index: 10; /* Bring elevated wrapper to front */
+}
+
+.top-user-wrapper.rank-3-wrapper {
+    order: 3; /* Third (right) */
+}
+
+/* Styling for the circular card itself (only contains rank number) */
+.top-user-card {
+    border-radius: 50%; /* Makes it circular */
+    display: flex; /* Flexbox for internal content alignment (rank number) */
+    justify-content: center; /* Center rank number horizontally */
+    align-items: center; /* Center rank number vertically */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Base shadow */
+    margin-bottom: 10px; /* Space between circle and text below it */
+    flex-shrink: 0; /* Prevent shrinking on smaller screens */
+}
+
+/* Rank 1 Card: Gold, larger */
+.top-user-card.rank-1 {
+    background: linear-gradient(135deg, #FFD700, #F7C502); /* Gold */
+    border: 2px solid #FFEB3B;
+    width: 160px; /* Larger circular size */
+    height: 160px; /* Same as width for perfect circle */
+}
+
+/* Rank 2 Card: Silver */
+.top-user-card.rank-2 {
+    background: linear-gradient(135deg, #C0C0C0, #B0B0B0); /* Silver */
+    border: 2px solid #D8D8D8;
+    width: 140px; /* Standard circular size */
+    height: 140px;
+}
+
+/* Rank 3 Card: Bronze */
+.top-user-card.rank-3 {
+    background: linear-gradient(135deg, #CD7F32, #B56C2B); /* Bronze */
+    border: 2px solid #E69D46;
+    width: 140px; /* Standard circular size */
+    height: 140px;
+}
+
+/* --- Text Styling inside the circular cards (only for rank number) --- */
+.top-user-card .rank-display {
+    font-size: 2.8em; /* Large size for the rank number */
+    font-weight: 800;
+    color: #333;
+    line-height: 1;
+}
+
+/* Optional: Rank-specific text colors for better contrast */
+.top-user-card.rank-1 .rank-display { color: #8B4513; }
+.top-user-card.rank-2 .rank-display { color: #4A4A4A; }
+.top-user-card.rank-3 .rank-display { color: #8B4513; }
+
+
+/* --- Text Styling BELOW the circular cards (for name and points) --- */
+.user-name-below {
+    font-size: 1.1em;
+    margin: 5px 0 2px 0; /* Adjust spacing as needed */
+    color: #333;
+    word-break: break-word;
+    white-space: nowrap; /* Prevent wrapping if name is short */
+    overflow: hidden; /* Hide overflow if name is long */
+    text-overflow: ellipsis; /* Add ellipsis for long names */
+    max-width: 100%; /* Ensure it respects wrapper width */
+}
+
+.points-display-below {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #6a0dad;
+    margin-top: 2px; /* Adjust spacing as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) { /* Adjust breakpoint as needed for tablet/mobile */
+    body {
+        padding: 10px;
+    }
+
+    .app-container {
+        padding: 20px;
+        gap: 20px;
+    }
+
+    h1, h2 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+
+    .top-3 {
+        gap: 5px; /* Reduce gap between cards on smaller screens */
+        padding-top: 30px; /* Slightly less padding for elevation on smaller screens */
+    }
+
+    /* Make all circular cards uniformly smaller on mobile */
+    .top-user-card.rank-1,
+    .top-user-card.rank-2,
+    .top-user-card.rank-3 {
+        width: 100px; /* Smaller circles for mobile */
+        height: 100px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Consistent shadow */
+    }
+
+    /* Adjust elevation for rank 1 on mobile if desired */
+    .top-user-wrapper.rank-1-wrapper {
+        transform: translateY(-30px); /* Less elevation on mobile */
+    }
+
+    .top-user-card .rank-display {
+        font-size: 2em; /* Adjust general rank display for mobile */
+    }
+
+    .user-name-below {
+        font-size: 0.9em; /* Smaller name font for mobile */
+    }
+
+    .points-display-below {
+        font-size: 0.8em; /* Smaller points font for mobile */
+    }
+
+    .leaderboard-item {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+
+    .leaderboard-item .rank {
+        width: 30px;
+    }
+}
+
+/* Very small screens (e.g., old phones) */
+@media (max-width: 480px) {
+    .app-container {
+        padding: 10px;
+        margin-top:30px;
+        width:300px;
+    }
+    .app-container h1{
+      font-size: 20px;
+      padding-bottom:-20px;
+    }
+    .top-3 {
+        gap:2px; /* Even smaller gap for very small screens */
+    }
+    .top-user-card.rank-1,
+    .top-user-card.rank-2,
+    .top-user-card.rank-3 {
+        width: 70px; /* Even smaller circles for very small screens */
+        height: 70px;
+    }
+    .top-user-card .rank-display {
+        font-size: 1.5em;
+    }
+    .user-name-below {
+        font-size: 0.85em;
+    }
+    .points-display-below {
+        font-size: 0.75em;
+    }
+    .leaderboard-item {
+        padding: 8px 10px;
+        font-size: 0.85em;
+    }
+}
