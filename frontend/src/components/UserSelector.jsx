@@ -1,19 +1,16 @@
-// This component handles two things:
-// 1. Adding new users 👤
-// 2. Claiming random points for a selected user 
-
+// src/UserSelector.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) => {
-    // All the internal states we need
-    const [selectedUserId, setSelectedUserId] = useState(''); // Who's getting points?
-    const [newUserName, setNewUserName] = useState(''); // Name of the new user to add
-    const [message, setMessage] = useState(''); // Success messages 🟢
-    const [error, setError] = useState(''); // Error messages 🔴
-    const [claiming, setClaiming] = useState(false); // Button loading state
+    // State for managing modal visibility
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
+    const [showGivePointsModal, setShowGivePointsModal] = useState(false);
 
-    // Automatically clear success/error messages after 3 seconds ⏳
+    // States for messages within the main component (optional, modals handle their own)
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+
     useEffect(() => {
         if (message || error) {
             const timer = setTimeout(() => {
@@ -24,86 +21,246 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
         }
     }, [message, error]);
 
-    // API call to add a new user
-    const handleAddUser = async () => {
-        setError('');
-        setMessage('');
-        if (!newUserName.trim()) {
-            setError('User name cannot be empty. 😑');
-            return;
-        }
-        try {
-            const response = await axios.post('http://localhost:5000/api/users', { name: newUserName });
-            setMessage(`User '${response.data.name}' added successfully! 🎉`);
-            setNewUserName('');
-            onUserAdded(); // Trigger refresh in parent
-        } catch (err) {
-            console.error('Error adding user:', err);
-            setError(err.response?.data?.msg || 'Failed to add user. Try again 🧯');
-        }
+    // --- AddUserModal Component ---
+    const AddUserModal = ({ onClose, onUserAdded }) => {
+        const [newUserName, setNewUserName] = useState('');
+        const [selectedAvatar, setSelectedAvatar] = useState(null); // New state for selected file
+        const [avatarPreview, setAvatarPreview] = useState(null); // New state for image preview
+        const [modalMessage, setModalMessage] = useState('');
+        const [modalError, setModalError] = useState('');
+        const [isAddingUser, setIsAddingUser] = useState(false); // For loading state
+
+        useEffect(() => {
+            if (modalMessage || modalError) {
+                const timer = setTimeout(() => {
+                    setModalMessage('');
+                    setModalError('');
+                }, 3000);
+                return () => clearTimeout(timer);
+            }
+        }, [modalMessage, modalError]);
+
+        // Effect to create and clean up image preview URL
+        useEffect(() => {
+            if (selectedAvatar) {
+                const objectUrl = URL.createObjectURL(selectedAvatar);
+                setAvatarPreview(objectUrl);
+                // Clean up the object URL when component unmounts or selectedAvatar changes
+                return () => URL.revokeObjectURL(objectUrl);
+            } else {
+                setAvatarPreview(null);
+            }
+        }, [selectedAvatar]);
+
+
+        const handleFileChange = (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                // Basic validation (optional)
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    setModalError('File size too large (max 5MB).');
+                    setSelectedAvatar(null);
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    setModalError('Please upload an image file.');
+                    setSelectedAvatar(null);
+                    return;
+                }
+                setSelectedAvatar(file);
+                setModalError(''); // Clear previous error
+            } else {
+                setSelectedAvatar(null);
+                setAvatarPreview(null);
+            }
+        };
+
+
+        const handleAddUserSubmit = async () => {
+            setModalError('');
+            setModalMessage('');
+            if (!newUserName.trim()) {
+                setModalError('User name cannot be empty. 😑');
+                return;
+            }
+
+            setIsAddingUser(true); // Set loading state
+
+            try {
+                // 1. Add the user (without avatar first)
+                const userResponse = await axios.post('http://localhost:5000/api/users', { name: newUserName.trim() });
+                const newUser = userResponse.data;
+
+                let avatarUploaded = false;
+                if (selectedAvatar) {
+                    // 2. If an avatar is selected, upload it
+                    const formData = new FormData();
+                    formData.append('avatar', selectedAvatar);
+
+                    try {
+                        await axios.post(`http://localhost:5000/api/users/${newUser._id}/avatar`, formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        });
+                        avatarUploaded = true;
+                    } catch (avatarUploadErr) {
+                        console.error('Error uploading avatar:', avatarUploadErr);
+                        setModalError(avatarUploadErr.response?.data?.msg || 'Failed to upload avatar. User added.');
+                        // Don't rethrow, let the user addition proceed even if avatar fails
+                    }
+                }
+
+                setModalMessage(`User '${newUser.name}' added successfully! ${avatarUploaded ? 'Avatar uploaded!' : ''} 🎉`);
+                setNewUserName('');
+                setSelectedAvatar(null); // Clear selected avatar
+                setAvatarPreview(null);  // Clear preview
+                onUserAdded(); // Trigger refresh in parent (App.jsx)
+                setTimeout(onClose, 1500); // Close after a short delay
+
+            } catch (err) {
+                console.error('Error adding user:', err);
+                setModalError(err.response?.data?.msg || 'Failed to add user. Try again 🧯');
+            } finally {
+                setIsAddingUser(false); // Clear loading state
+            }
+        };
+
+        return (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <h3>Add New User</h3>
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            value={newUserName}
+                            onChange={(e) => setNewUserName(e.target.value)}
+                            placeholder="Enter new user name"
+                            disabled={isAddingUser}
+                        />
+                    </div>
+                    <div className="form-group avatar-upload-group"> {/* Added a class for styling */}
+                        <label htmlFor="avatar-upload-input" className="avatar-upload-label">
+                            {avatarPreview ? (
+                                <img src={avatarPreview} alt="Avatar Preview" className="avatar-preview-thumbnail" />
+                            ) : (
+                                <span className="placeholder-text">Choose Avatar (Optional)</span>
+                            )}
+                            <input
+                                id="avatar-upload-input"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                disabled={isAddingUser}
+                            />
+                        </label>
+                    </div>
+
+                    <div className="modal-actions">
+                        <button onClick={handleAddUserSubmit} disabled={isAddingUser}>
+                            {isAddingUser ? 'Adding...' : 'Add User'}
+                        </button>
+                        <button className="cancel-button" onClick={onClose} disabled={isAddingUser}>
+                            Cancel
+                        </button>
+                    </div>
+                    {modalMessage && <div className="message">{modalMessage}</div>}
+                    {modalError && <div className="message error">{modalError}</div>}
+                </div>
+            </div>
+        );
     };
 
-    // API call to give random points to the selected user
-    const handleClaimPoints = async () => {
-        setError('');
-        setMessage('');
-        if (!selectedUserId) {
-            setError('Please select a user first. 🫠');
-            return;
-        }
+    // --- GivePointsModal Component (No changes needed here unless you want avatar in list) ---
+    const GivePointsModal = ({ users, onClose, onPointsClaimed, refreshRankings }) => {
+        const [claiming, setClaiming] = useState(false);
+        const [modalMessage, setModalMessage] = useState('');
+        const [modalError, setModalError] = useState('');
 
-        setClaiming(true); // Start loading
-        try {
-            const response = await axios.post(`http://localhost:5000/api/claim-points/${selectedUserId}`);
-            setMessage(response.data.message); // e.g., "50 points awarded!"
-            onPointsClaimed(response.data.user); // Update parent
-            refreshRankings(); // Re-fetch leaderboard
-        } catch (err) {
-            console.error('Error claiming points:', err);
-            setError(err.response?.data?.msg || 'Could not claim points 🛑');
-        } finally {
-            setClaiming(false); // Stop loading
-        }
+        useEffect(() => {
+            if (modalMessage || modalError) {
+                const timer = setTimeout(() => {
+                    setModalMessage('');
+                    setModalError('');
+                }, 3000);
+                return () => clearTimeout(timer);
+            }
+        }, [modalMessage, modalError]);
+
+        const handleClaimPointsClick = async (userId, userName) => {
+            setModalError('');
+            setModalMessage('');
+            setClaiming(true);
+            try {
+                const response = await axios.post(`http://localhost:5000/api/claim-points/${userId}`);
+                setModalMessage(`Awarded ${response.data.pointsAwarded} points to ${userName}! 🎉`);
+                onPointsClaimed(response.data.user); // Update parent
+                refreshRankings(); // Re-fetch leaderboard
+                setTimeout(onClose, 1500); // Close after a short delay
+            } catch (err) {
+                console.error('Error claiming points:', err);
+                setModalError(err.response?.data?.msg || 'Could not claim points 🛑');
+            } finally {
+                setClaiming(false);
+            }
+        };
+
+        return (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <h3>Give Points to a User</h3>
+                    <div className="user-list-for-points">
+                        {users.length > 0 ? (
+                            users.map((user) => (
+                                <div key={user._id} className="user-item-for-points" onClick={() => handleClaimPointsClick(user._id, user.name)}>
+                                    {/* Optionally add avatar here too */}
+                                    <span className="user-name-and-avatar">
+                                        <img
+                                            src={user.avatar || '/assets/default_avatar.png'} // Use default if no avatar
+                                            alt={user.name}
+                                            className="user-avatar-list-small"
+                                        />
+                                        {user.name}
+                                    </span>
+                                    <span className="current-points">({user.totalPoints} points)</span>
+                                    {claiming && <span className="claiming-spinner"></span>}
+                                </div>
+                            ))
+                        ) : (
+                            <p>No users available to give points. Add some first!</p>
+                        )}
+                    </div>
+                    <div className="modal-actions">
+                        <button className="cancel-button" onClick={onClose}>Close</button>
+                    </div>
+                    {modalMessage && <div className="message">{modalMessage}</div>}
+                    {modalError && <div className="message error">{modalError}</div>}
+                    {claiming && <div className="message">Processing points...</div>}
+                </div>
+            </div>
+        );
     };
 
     return (
-        <div className="user-section">
-            <h2>Manage Users & Claim Points</h2>
+        <div className="user-management-buttons">
+            <button onClick={() => setShowAddUserModal(true)}>Add User</button>
+            <button onClick={() => setShowGivePointsModal(true)} disabled={users.length === 0}>Give Points</button>
 
-            {/* Input section to add a new user */}
-            <div className="form-group">
-                <label htmlFor="newUser">Add New User:</label>
-                <input
-                    type="text"
-                    id="newUser"
-                    value={newUserName}
-                    onChange={(e) => setNewUserName(e.target.value)}
-                    placeholder="Enter new user name"
+            {showAddUserModal && (
+                <AddUserModal
+                    onClose={() => setShowAddUserModal(false)}
+                    onUserAdded={onUserAdded}
                 />
-                <button onClick={handleAddUser}>Add User</button>
-            </div>
+            )}
+            {showGivePointsModal && (
+                <GivePointsModal
+                    users={users}
+                    onClose={() => setShowGivePointsModal(false)}
+                    onPointsClaimed={onPointsClaimed}
+                    refreshRankings={refreshRankings}
+                />
+            )}
 
-            {/* Dropdown to select user and claim points */}
-            <div className="form-group">
-                <label htmlFor="selectUser">Select User:</label>
-                <select
-                    id="selectUser"
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                >
-                    <option value="">-- Select a user --</option>
-                    {users.map((user) => (
-                        <option key={user._id} value={user._id}>
-                            {user.name} ({user.totalPoints} points)
-                        </option>
-                    ))}
-                </select>
-                <button onClick={handleClaimPoints} disabled={!selectedUserId || claiming}>
-                    {claiming ? 'Claiming...' : 'Claim Random Points'}
-                </button>
-            </div>
-
-            {/* Messages shown to user */}
             {message && <div className="message">{message}</div>}
             {error && <div className="message error">{error}</div>}
         </div>

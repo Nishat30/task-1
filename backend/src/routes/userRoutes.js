@@ -1,17 +1,18 @@
 // server/src/routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); // Path is relative to routes/
-const ClaimHistory = require('../models/ClaimHistory'); // Path is relative to routes/
+const User = require('../models/User');
+const ClaimHistory = require('../models/ClaimHistory');
+const upload = require('../middleware/multer');
+const cloudinary = require('../config/cloudinary');
+const fs = require('fs').promises;
 
 const generateRandomPoints = () => {
     return Math.floor(Math.random() * 10) + 1;
 };
 
 // @route   POST /api/users
-// @desc    Add a new user
-// @access  Public
-router.post('/users', async (req, res) => { // Route is /api/users
+router.post('/users', async (req, res) => {
     const { name } = req.body;
     if (!name) {
         return res.status(400).json({ msg: 'User name is required' });
@@ -30,10 +31,62 @@ router.post('/users', async (req, res) => { // Route is /api/users
     }
 });
 
+// @route   POST /api/users/:userId/avatar
+router.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ msg: 'No image file uploaded.' });
+        }
+
+        let cloudinaryResult;
+        try {
+            cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'leaderboard_avatars',
+                public_id: `avatar_${userId}`,
+                overwrite: true,
+                gravity: "face",
+                height: 200,
+                width: 200,
+                crop: "thumb"
+            });
+
+            user.avatar = cloudinaryResult.secure_url;
+            await user.save();
+
+            res.json({
+                msg: 'Avatar uploaded successfully!',
+                avatarUrl: user.avatar,
+                user: user
+            });
+
+        } catch (uploadError) {
+            console.error('Cloudinary upload error:', uploadError);
+            return res.status(500).json({ msg: 'Failed to upload image to Cloudinary.' });
+        } finally {
+            if (req.file && req.file.path) {
+                await fs.unlink(req.file.path).catch(err => console.error("Error deleting temp file:", err));
+            }
+        }
+
+    } catch (err) {
+        console.error('Server error during avatar update:', err.message);
+        if (err.message === 'Error: Images Only!' || err.message.includes('File too large')) {
+            return res.status(400).json({ msg: err.message });
+        }
+        res.status(500).send('Server Error');
+    }
+});
+
+
 // @route   GET /api/users
-// @desc    Get all users
-// @access  Public
-router.get('/users', async (req, res) => { // Route is /api/users
+router.get('/users', async (req, res) => {
     try {
         const users = await User.find().sort({ totalPoints: -1 });
         res.json(users);
@@ -44,8 +97,6 @@ router.get('/users', async (req, res) => { // Route is /api/users
 });
 
 // @route   POST /api/claim-points/:userId
-// @desc    Claim random points for a user and record history
-// @access  Public
 router.post('/claim-points/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -57,7 +108,20 @@ router.post('/claim-points/:userId', async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
+        // Add 12-hour cool-down logic here (from previous discussion)
+        const now = new Date();
+        const lastClaimed = user.lastClaimed;
+        const twelveHours = 12 * 60 * 60 * 1000;
+
+        if (lastClaimed && (now - lastClaimed < twelveHours)) {
+            const timeLeftMs = twelveHours - (now - lastClaimed);
+            const hoursLeft = Math.floor(timeLeftMs / (1000 * 60 * 60));
+            const minutesLeft = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
+            return res.status(400).json({ msg: `You can claim points again in ${hoursLeft} hours and ${minutesLeft} minutes.`, user: user });
+        }
+
         user.totalPoints += points;
+        user.lastClaimed = now; // Update lastClaimed
         await user.save();
 
         const claimHistory = new ClaimHistory({
@@ -78,8 +142,6 @@ router.post('/claim-points/:userId', async (req, res) => {
 });
 
 // @route   GET /api/rankings
-// @desc    Get all users with calculated ranks (for leaderboard)
-// @access  Public
 router.get('/rankings', async (req, res) => {
     try {
         const users = await User.find().sort({ totalPoints: -1 });
@@ -96,7 +158,8 @@ router.get('/rankings', async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 totalPoints: user.totalPoints,
-                rank: currentRank
+                rank: currentRank,
+                avatar: user.avatar // Include avatar
             };
         });
 
@@ -108,8 +171,6 @@ router.get('/rankings', async (req, res) => {
 });
 
 // @route   GET /api/claim-history/:userId
-// @desc    Get claim history for a specific user
-// @access  Public
 router.get('/claim-history/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;

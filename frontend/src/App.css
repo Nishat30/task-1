@@ -1,10 +1,8 @@
 /* src/App.css - CONSOLIDATED AND RESPONSIVE CONTENT FOR YOUR LEADERBOARD APP */
 
 body {
-    font-family: sans-serif;
-    /* FIX THIS PATH: Ensure 'assets/background_img.png' is correct relative to App.css */
-    /* Example if 'assets' is in 'src' folder: url('../assets/background_img.png') */
-    background-image: url('assets/background_img.png');
+    font-family: 'Inter', sans-serif;
+    background-image: url('assets/background_img.png'); /* Adjusted path, assuming assets is in public */
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -15,60 +13,34 @@ body {
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    box-sizing: border-box; /* Important for consistent padding/sizing */
+    box-sizing: border-box;
 }
 
 .app-container {
-    background-color: rgba(255, 255, 255, 0.15); /* Glassmorphism effect */
+    background-color: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* For Safari */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle white border */
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Stronger shadow for depth */
-    padding: 30px;
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    padding: 20px;
     border-radius: 12px;
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    box-sizing: border-box; /* Include padding in width/height */
+    gap: 20px;
+    box-sizing: border-box;
 }
 
 h1, h2 {
     text-align: center;
     color: #333;
-    margin-bottom: 20px;
-}
-
-.user-section, .leaderboard-section {
-    padding: 20px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.15); /* Glassmorphism for sections too */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
-
-input[type="text"], select {
-    width: calc(100% - 20px);
-    padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
+}
+
+.leaderboard-section {
+    padding: 20px;
+    margin-top:20px;
 }
 
 button {
@@ -110,12 +82,12 @@ button:disabled {
 .leaderboard-list {
     list-style: none;
     padding: 0;
+    margin-top: 20px; /* Give space below the top 3 section */
 }
 
 .leaderboard-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Align items vertically in the middle */
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
 }
@@ -124,16 +96,14 @@ button:disabled {
     border-bottom: none;
 }
 
-.leaderboard-item span {
-    font-size: 1.1em;
-    color: #333;
-}
-
+/* Updated to include avatar within the flow */
 .leaderboard-item .rank {
     font-weight: bold;
     color: #040405ff;
     width: 40px;
     text-align: center;
+    flex-shrink: 0;
+    margin-right: 10px; /* Space between rank and avatar */
 }
 
 .leaderboard-item .name {
@@ -143,117 +113,403 @@ button:disabled {
 .leaderboard-item .points {
     font-weight: bold;
     color: #6a0dad;
+    flex-shrink: 0;
 }
 
 /* --- TOP 3 USERS STYLING (CIRCULAR ALIGNMENT with text below) --- */
 .top-3 {
-    display: flex; /* Flex container for the three user wrappers */
-    justify-content: center; /* Center the group of wrappers horizontally */
-    align-items: flex-end; /* Align wrappers to the bottom, allowing Rank 1 to be elevated */
-    margin-bottom: 20px;
-    gap: 10px; /* Space between the three user wrappers */
-    padding-top: 50px; /* Provide space for Rank 1 elevation */
-    position: relative; /* For z-index on elevated wrapper */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    gap: 5px;
+    padding-top: 0;
+    position: relative;
 }
 
-/* Wrapper for each top user (card + name + points) */
 .top-user-wrapper {
-    display: flex; /* Make each wrapper a flex container */
-    flex-direction: column; /* Stack contents (circle, name, points) vertically */
-    align-items: center; /* Center items horizontally within the wrapper */
-    text-align: center; /* Ensures text inside is centered */
-    transition: transform 0.3s ease-in-out; /* Smooth transition for elevation */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    position: relative;
 }
 
-/* Apply order to wrappers to control visual sequence (Rank 2 | Rank 1 | Rank 3) */
 .top-user-wrapper.rank-2-wrapper {
-    order: 1; /* First (left) */
+    order: 1;
 }
 
 .top-user-wrapper.rank-1-wrapper {
-    order: 2; /* Second (center) */
-    transform: translateY(-50px); /* Elevate Rank 1 wrapper */
-    z-index: 10; /* Bring elevated wrapper to front */
+    order: 2;
+    transform: translateY(-50px); /* Elevate Rank 1 wrapper to be higher */
+    z-index: 10;
 }
 
 .top-user-wrapper.rank-3-wrapper {
-    order: 3; /* Third (right) */
+    order: 3;
 }
 
-/* Styling for the circular card itself (only contains rank number) */
+/* Styling for the circular card itself (now contains avatar as background) */
 .top-user-card {
-    border-radius: 50%; /* Makes it circular */
-    display: flex; /* Flexbox for internal content alignment (rank number) */
-    justify-content: center; /* Center rank number horizontally */
-    align-items: center; /* Center rank number vertically */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Base shadow */
-    margin-bottom: 10px; /* Space between circle and text below it */
-    flex-shrink: 0; /* Prevent shrinking on smaller screens */
+    border-radius: 50%;
+    display: flex; /* For centering the rank-overlay content */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 5px; /* Space between card and name */
+    flex-shrink: 0;
+    position: relative; /* Crucial for positioning .rank-overlay */
+
+    /* Avatar as background - THESE ARE THE KEY PROPERTIES */
+    background-size: cover; /* Ensures the image fills the circle */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents tiling */
+    background-color: #f0f0f0; /* Fallback if image fails to load */
+    overflow: hidden; /* Ensures image respects border-radius */
+    border: 2px solid; /* Will be overridden by rank-specific borders */
+}
+
+/* Overlay for rank number to ensure readability */
+.rank-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* This background provides the color/tint over the avatar */
+    background: linear-gradient(135deg, rgba(255,215,0,0.6), rgba(247,197,2,0.6)); /* Default, overridden below */
+    z-index: 1; /* Ensures overlay is on top of the background image */
 }
 
 /* Rank 1 Card: Gold, larger */
 .top-user-card.rank-1 {
-    background: linear-gradient(135deg, #FFD700, #F7C502); /* Gold */
-    border: 2px solid #FFEB3B;
-    width: 160px; /* Larger circular size */
-    height: 160px; /* Same as width for perfect circle */
+    width: 160px; /* Slightly larger for #1 */
+    height: 160px;
+    border-color: #FFEB3B; /* Gold border */
+    /* Remove `top:30px;` from here, it conflicts with flex alignment and transform */
+}
+.top-user-card.rank-1 .rank-overlay {
+    background: linear-gradient(135deg, rgba(255,215,0,0.6), rgba(247,197,2,0.6)); /* Gold overlay */
 }
 
 /* Rank 2 Card: Silver */
 .top-user-card.rank-2 {
-    background: linear-gradient(135deg, #C0C0C0, #B0B0B0); /* Silver */
-    border: 2px solid #D8D8D8;
-    width: 140px; /* Standard circular size */
+    width: 140px;
     height: 140px;
+    border-color: #D8D8D8; /* Silver border */
+    /* Remove `top:10px;` */
+}
+.top-user-card.rank-2 .rank-overlay {
+    background: linear-gradient(135deg, rgba(192,192,192,0.6), rgba(176,176,176,0.6)); /* Silver overlay */
 }
 
 /* Rank 3 Card: Bronze */
 .top-user-card.rank-3 {
-    background: linear-gradient(135deg, #CD7F32, #B56C2B); /* Bronze */
-    border: 2px solid #E69D46;
-    width: 140px; /* Standard circular size */
+    width: 140px;
     height: 140px;
+    border-color: #E69D46; /* Bronze border */
+    /* Remove `top:10px;` */
+}
+.top-user-card.rank-3 .rank-overlay {
+    background: linear-gradient(135deg, rgba(205,127,50,0.6), rgba(181,108,43,0.6)); /* Bronze overlay */
 }
 
-/* --- Text Styling inside the circular cards (only for rank number) --- */
+/* --- Text Styling inside the circular cards (rank number) --- */
 .top-user-card .rank-display {
-    font-size: 2.8em; /* Large size for the rank number */
+    font-size: 2.8em;
     font-weight: 800;
-    color: #333;
+    color: #333; /* Default text color for rank number */
     line-height: 1;
+    z-index: 2; /* Ensure rank number is above the overlay */
+    position: relative; /* Ensures z-index works */
 }
 
-/* Optional: Rank-specific text colors for better contrast */
+/* Rank-specific text colors for better contrast */
 .top-user-card.rank-1 .rank-display { color: #8B4513; }
 .top-user-card.rank-2 .rank-display { color: #4A4A4A; }
 .top-user-card.rank-3 .rank-display { color: #8B4513; }
 
-
-/* --- Text Styling BELOW the circular cards (for name and points) --- */
 .user-name-below {
     font-size: 1.1em;
-    margin: 5px 0 2px 0; /* Adjust spacing as needed */
+    margin: 5px 0 2px 0; /* Space below card, then name */
     color: #333;
     word-break: break-word;
-    white-space: nowrap; /* Prevent wrapping if name is short */
-    overflow: hidden; /* Hide overflow if name is long */
-    text-overflow: ellipsis; /* Add ellipsis for long names */
-    max-width: 100%; /* Ensure it respects wrapper width */
-}
-
-.points-display-below {
-    font-size: 0.9em;
-    font-weight: bold;
-    color: #6a0dad;
-    margin-top: 2px; /* Adjust spacing as needed */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
 }
 
+
+.points-display-below {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #6a0dad;
+    margin-top: 1px; /* Small space between name and points */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* --- New styles for the User Management Buttons --- */
+.user-management-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 2px; /* Added some margin from leaderboard */
+    padding: 10px;
+}
+
+.user-management-buttons button {
+    flex: 1;
+    max-width: 180px;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.user-management-buttons button:hover {
+    background-color: #5a0ca0;
+    transform: translateY(-2px);
+}
+
+.user-management-buttons button:disabled {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* --- Modal Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-sizing: border-box;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.modal-content input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    padding: 10px 25px;
+    font-size: 1em;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal-actions button.cancel-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-actions button.cancel-button:hover {
+    background-color: #da190b;
+}
+
+/* Specific styles for Give Points Modal User List */
+.user-list-for-points {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.user-item-for-points {
+    display: flex;
+    align-items: center; /* Align avatar and name */
+    justify-content: space-between;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.user-item-for-points:last-child {
+    border-bottom: none;
+}
+
+.user-item-for-points:hover {
+    background-color: #e0e0e0;
+}
+
+.user-item-for-points .user-name { /* Added class for consistency */
+    font-size: 1.1em;
+    color: #555;
+    flex-grow: 1; /* Allow name to take space */
+    text-align: left; /* Align name to left */
+}
+
+.user-item-for-points .current-points {
+    font-weight: bold;
+    color: #6a0dad;
+    margin-left: 10px;
+    flex-shrink: 0; /* Prevent points from shrinking */
+}
+
+.claiming-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Avatar Upload Specific Styles --- */
+.form-group.avatar-upload-group {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.avatar-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden; /* Crops overflowing image parts */
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.avatar-upload-label:hover {
+    border-color: #6a0dad;
+    background-color: #f0f0f0;
+}
+
+.avatar-upload-label input[type="file"] {
+    display: none;
+}
+
+.avatar-preview-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Crops the image to fit without stretching */
+    border-radius: 50%;
+    display: block;
+}
+
+.placeholder-text {
+    color: #888;
+    font-size: 0.9em;
+    text-align: center;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+
+/* Styles for small avatars in the leaderboard list (Rank 4 onwards) */
+.leaderboard-item .user-avatar-list {
+    width: 35px; /* Slightly larger for better visibility */
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px; /* Space between avatar and name */
+    border: 1px solid #eee; /* Subtle border */
+    flex-shrink: 0;
+}
+
+/* Styles for avatars in the Give Points Modal user list */
+.user-item-for-points .user-avatar-list-small {
+    width: 30px; /* Slightly larger for modal list */
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    margin-right: 10px; /* Space between avatar and name in modal */
+}
+
+.user-item-for-points {
+    display: flex;
+    align-items: center; /* Align avatar and text */
+}
+
 /* --- Responsive Adjustments --- */
-@media (max-width: 768px) { /* Adjust breakpoint as needed for tablet/mobile */
+@media (max-width: 768px) {
     body {
         padding: 10px;
     }
@@ -269,34 +525,35 @@ button:disabled {
     }
 
     .top-3 {
-        gap: 5px; /* Reduce gap between cards on smaller screens */
-        padding-top: 30px; /* Slightly less padding for elevation on smaller screens */
+        gap: 5px;
+        padding-top: 0;
     }
 
-    /* Make all circular cards uniformly smaller on mobile */
-    .top-user-card.rank-1,
+    /* Responsive card sizes for top 3 */
+    .top-user-card.rank-1 {
+        width: 120px;
+        height: 120px;
+    }
     .top-user-card.rank-2,
     .top-user-card.rank-3 {
-        width: 100px; /* Smaller circles for mobile */
+        width: 100px;
         height: 100px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Consistent shadow */
     }
 
-    /* Adjust elevation for rank 1 on mobile if desired */
     .top-user-wrapper.rank-1-wrapper {
-        transform: translateY(-30px); /* Less elevation on mobile */
+        transform: translateY(-40px); /* Less elevation on mobile */
     }
 
     .top-user-card .rank-display {
-        font-size: 2em; /* Adjust general rank display for mobile */
+        font-size: 2em;
     }
 
     .user-name-below {
-        font-size: 0.9em; /* Smaller name font for mobile */
+        font-size: 0.9em;
     }
 
     .points-display-below {
-        font-size: 0.8em; /* Smaller points font for mobile */
+        font-size: 0.8em;
     }
 
     .leaderboard-item {
@@ -306,29 +563,74 @@ button:disabled {
 
     .leaderboard-item .rank {
         width: 30px;
+        margin-right: 8px;
+    }
+
+    .leaderboard-item .user-avatar-list {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+    }
+    .avatar-upload-label {
+        width: 100px;
+        height: 100px;
+    }
+
+    .modal-content {
+        padding: 20px;
+        max-width: 95%;
+    }
+
+    .modal-actions button {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .user-item-for-points {
+        padding: 10px 8px;
+        font-size: 0.9em;
+    }
+    .user-item-for-points .user-avatar-list-small {
+        width: 25px;
+        height: 25px;
+        margin-right: 8px;
     }
 }
 
 /* Very small screens (e.g., old phones) */
 @media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
     .app-container {
         padding: 10px;
-        margin-top:30px;
-        width:300px;
+        margin-top: 30px;
+        width: 300px;
     }
-    .app-container h1{
-      font-size: 20px;
-      padding-bottom:-20px;
+    .app-container h1 {
+        font-size: 20px;
+        padding-bottom: -20px;
     }
     .top-3 {
-        gap:2px; /* Even smaller gap for very small screens */
+        gap: 2px;
+        padding-top: 0;
     }
-    .top-user-card.rank-1,
+
+    /* Responsive card sizes for top 3 on very small screens */
+    .top-user-card.rank-1 {
+        width: 90px;
+        height: 90px;
+    }
     .top-user-card.rank-2,
     .top-user-card.rank-3 {
-        width: 70px; /* Even smaller circles for very small screens */
-        height: 70px;
+        width: 80px;
+        height: 80px;
     }
+
+    .top-user-wrapper.rank-1-wrapper {
+        transform: translateY(-30px);
+    }
+
     .top-user-card .rank-display {
         font-size: 1.5em;
     }
@@ -341,5 +643,37 @@ button:disabled {
     .leaderboard-item {
         padding: 8px 10px;
         font-size: 0.85em;
+    }
+    .leaderboard-item .rank {
+        width: 25px;
+        margin-right: 5px;
+    }
+    .leaderboard-item .user-avatar-list {
+        width: 25px;
+        height: 25px;
+        margin-right: 8px;
+    }
+    .avatar-upload-label {
+        width: 80px;
+        height: 80px;
+    }
+    .placeholder-text {
+        font-size: 0.75em;
+    }
+    .modal-content {
+        padding: 15px;
+        max-width: 98%;
+    }
+    .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .modal-actions button {
+        width: 100%;
+    }
+    .user-item-for-points .user-avatar-list-small {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
     }
 }

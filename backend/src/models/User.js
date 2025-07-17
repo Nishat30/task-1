@@ -1,7 +1,7 @@
-// server/src/models/User.js
+// backend/models/User.js
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -11,7 +11,16 @@ const userSchema = new mongoose.Schema({
     totalPoints: {
         type: Number,
         default: 0
+    },
+    avatar: {
+        type: String, // Will store the Cloudinary URL
+        // PASTE THE ACTUAL SECURE URL YOU GOT FROM CLOUDINARY HERE:
+        default: 'https://res.cloudinary.com/dtzvourc7h/image/upload/v1234567890/leaderboard_avatars/default_avatar.png' // <-- EXAMPLE ONLY, use your specific URL
+    },
+    lastClaimed: {
+        type: Date,
+        default: null
     }
-}, { timestamps: true });
+});
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

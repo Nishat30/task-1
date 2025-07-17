@@ -72,13 +72,14 @@ function App() {
     return (
         <div className="app-container">
             <h1>Leaderboard Application</h1>
-            <Leaderboard rankings={rankings} />
             <UserSelector
                 users={users}
                 onUserAdded={handleUserAdded}
                 onPointsClaimed={handlePointsClaimed}
                 refreshRankings={fetchRankings}
             />
+            <Leaderboard rankings={rankings} />
+            
         </div>
     );
 }
