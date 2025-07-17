@@ -1,4 +1,3 @@
-// src/UserSelector.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -21,14 +20,13 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
         }
     }, [message, error]);
 
-    // --- AddUserModal Component ---
     const AddUserModal = ({ onClose, onUserAdded }) => {
         const [newUserName, setNewUserName] = useState('');
-        const [selectedAvatar, setSelectedAvatar] = useState(null); // New state for selected file
-        const [avatarPreview, setAvatarPreview] = useState(null); // New state for image preview
+        const [selectedAvatar, setSelectedAvatar] = useState(null); 
+        const [avatarPreview, setAvatarPreview] = useState(null); 
         const [modalMessage, setModalMessage] = useState('');
         const [modalError, setModalError] = useState('');
-        const [isAddingUser, setIsAddingUser] = useState(false); // For loading state
+        const [isAddingUser, setIsAddingUser] = useState(false); 
 
         useEffect(() => {
             if (modalMessage || modalError) {
@@ -40,12 +38,10 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             }
         }, [modalMessage, modalError]);
 
-        // Effect to create and clean up image preview URL
         useEffect(() => {
             if (selectedAvatar) {
                 const objectUrl = URL.createObjectURL(selectedAvatar);
                 setAvatarPreview(objectUrl);
-                // Clean up the object URL when component unmounts or selectedAvatar changes
                 return () => URL.revokeObjectURL(objectUrl);
             } else {
                 setAvatarPreview(null);
@@ -87,13 +83,11 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             setIsAddingUser(true); // Set loading state
 
             try {
-                // 1. Add the user (without avatar first)
                 const userResponse = await axios.post('http://localhost:5000/api/users', { name: newUserName.trim() });
                 const newUser = userResponse.data;
 
                 let avatarUploaded = false;
                 if (selectedAvatar) {
-                    // 2. If an avatar is selected, upload it
                     const formData = new FormData();
                     formData.append('avatar', selectedAvatar);
 
@@ -107,22 +101,21 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
                     } catch (avatarUploadErr) {
                         console.error('Error uploading avatar:', avatarUploadErr);
                         setModalError(avatarUploadErr.response?.data?.msg || 'Failed to upload avatar. User added.');
-                        // Don't rethrow, let the user addition proceed even if avatar fails
                     }
                 }
 
                 setModalMessage(`User '${newUser.name}' added successfully! ${avatarUploaded ? 'Avatar uploaded!' : ''} 🎉`);
                 setNewUserName('');
-                setSelectedAvatar(null); // Clear selected avatar
-                setAvatarPreview(null);  // Clear preview
-                onUserAdded(); // Trigger refresh in parent (App.jsx)
-                setTimeout(onClose, 1500); // Close after a short delay
+                setSelectedAvatar(null); 
+                setAvatarPreview(null); 
+                onUserAdded();
+                setTimeout(onClose, 1500); 
 
             } catch (err) {
                 console.error('Error adding user:', err);
                 setModalError(err.response?.data?.msg || 'Failed to add user. Try again');
             } finally {
-                setIsAddingUser(false); // Clear loading state
+                setIsAddingUser(false); 
             }
         };
 
@@ -144,7 +137,7 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
                             {avatarPreview ? (
                                 <img src={avatarPreview} alt="Avatar Preview" className="avatar-preview-thumbnail" />
                             ) : (
-                                <span className="placeholder-text">Choose Avatar (Optional)</span>
+                                <span className="placeholder-text">Choose Avatar</span>
                             )}
                             <input
                                 id="avatar-upload-input"
@@ -192,12 +185,12 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             try {
                 const response = await axios.post(`http://localhost:5000/api/claim-points/${userId}`);
                 setModalMessage(`Awarded ${response.data.pointsAwarded} points to ${userName}! 🎉`);
-                onPointsClaimed(response.data.user); // Update parent
-                refreshRankings(); // Re-fetch leaderboard
-                setTimeout(onClose, 1500); // Close after a short delay
+                onPointsClaimed(response.data.user);
+                refreshRankings(); 
+                setTimeout(onClose, 3000); 
             } catch (err) {
                 console.error('Error claiming points:', err);
-                setModalError(err.response?.data?.msg || 'Could not claim points 🛑');
+                setModalError(err.response?.data?.msg || 'Could not claim points 👻');
             } finally {
                 setClaiming(false);
             }
@@ -211,10 +204,10 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
                         {users.length > 0 ? (
                             users.map((user) => (
                                 <div key={user._id} className="user-item-for-points" onClick={() => handleClaimPointsClick(user._id, user.name)}>
-                                    {/* Optionally add avatar here too */}
+                                    
                                     <span className="user-name-and-avatar">
                                         <img
-                                            src={user.avatar || '/assets/default_avatar.png'} // Use default if no avatar
+                                            src={user.avatar} 
                                             alt={user.name}
                                             className="user-avatar-list-small"
                                         />

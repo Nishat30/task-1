@@ -1,4 +1,3 @@
-// server/src/routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
@@ -108,20 +107,19 @@ router.post('/claim-points/:userId', async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        // Add 12-hour cool-down logic here (from previous discussion)
+        // Add 5-min cool-down logic here 
         const now = new Date();
         const lastClaimed = user.lastClaimed;
-        const twelveHours = 12 * 60 * 60 * 1000;
+        const twelveHours = 0.1 *60 * 60 * 1000;
 
         if (lastClaimed && (now - lastClaimed < twelveHours)) {
             const timeLeftMs = twelveHours - (now - lastClaimed);
-            const hoursLeft = Math.floor(timeLeftMs / (1000 * 60 * 60));
             const minutesLeft = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
-            return res.status(400).json({ msg: `You can claim points again in ${hoursLeft} hours and ${minutesLeft} minutes.`, user: user });
+            return res.status(400).json({ msg: `You can claim points again in ${minutesLeft} minutes.`, user: user });
         }
 
         user.totalPoints += points;
-        user.lastClaimed = now; // Update lastClaimed
+        user.lastClaimed = now; 
         await user.save();
 
         const claimHistory = new ClaimHistory({

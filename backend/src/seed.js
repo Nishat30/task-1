@@ -1,4 +1,3 @@
-// backend/models/User.js
 require('dotenv').config();
 const mongoose = require('mongoose');
 const User = require('./models/User');
@@ -21,13 +20,11 @@ const seedDB = async () => {
         console.log('MongoDB connected for seeding.');
 
         for (const userData of usersToSeed) {
-            // Check if user exists by name, case-insensitive
             const existingUser = await User.findOne({ name: new RegExp(`^${userData.name.trim()}$`, 'i') });
             if (!existingUser) {
                 await User.create(userData);
                 console.log(`User '${userData.name}' added with avatar.`);
             } else {
-                // If user exists, update their avatar if it's different or missing
                 if (existingUser.avatar !== userData.avatar) {
                     await User.updateOne({ _id: existingUser._id }, { $set: { avatar: userData.avatar } });
                     console.log(`User '${userData.name}' already exists. Avatar updated.`);
