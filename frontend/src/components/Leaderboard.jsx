@@ -30,7 +30,6 @@ const Leaderboard = ({ rankings }) => {
                                     style={{ backgroundImage: `url(${rank2User.avatar || DEFAULT_AVATAR_PATH})` }}
                                 >
                                     <div className="rank-overlay">
-                                        <span className="rank-display">#{rank2User.rank}</span>
                                     </div>
                                 </div>
                                 <h3 className="user-name-below">{rank2User.name}</h3>
@@ -47,7 +46,6 @@ const Leaderboard = ({ rankings }) => {
                                     style={{ backgroundImage: `url(${rank1User.avatar || DEFAULT_AVATAR_PATH})` }}
                                 >
                                      <div className="rank-overlay">
-                                        <span className="rank-display">#{rank1User.rank}</span>
                                     </div>
                                 </div>
                                 <h3 className="user-name-below">{rank1User.name}</h3>
@@ -64,7 +62,6 @@ const Leaderboard = ({ rankings }) => {
                                     style={{ backgroundImage: `url(${rank3User.avatar || DEFAULT_AVATAR_PATH})` }}
                                 >
                                      <div className="rank-overlay">
-                                        <span className="rank-display">#{rank3User.rank}</span>
                                     </div>
                                 </div>
                                 <h3 className="user-name-below">{rank3User.name}</h3>

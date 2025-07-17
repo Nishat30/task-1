@@ -1,5 +1,4 @@
-// backend/models/User.js
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); 
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -13,9 +12,8 @@ const UserSchema = new mongoose.Schema({
         default: 0
     },
     avatar: {
-        type: String, // Will store the Cloudinary URL
-        // PASTE THE ACTUAL SECURE URL YOU GOT FROM CLOUDINARY HERE:
-        default: 'https://res.cloudinary.com/dtzvourc7h/image/upload/v1234567890/leaderboard_avatars/default_avatar.png' // <-- EXAMPLE ONLY, use your specific URL
+        type: String,
+        default: 'https://res.cloudinary.com/dtzvourc7h/image/upload/v1234567890/leaderboard_avatars/default_avatar.png'
     },
     lastClaimed: {
         type: Date,

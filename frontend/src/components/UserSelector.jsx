@@ -80,7 +80,7 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             setModalError('');
             setModalMessage('');
             if (!newUserName.trim()) {
-                setModalError('User name cannot be empty. 😑');
+                setModalError('User name cannot be empty.');
                 return;
             }
 
@@ -120,7 +120,7 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
 
             } catch (err) {
                 console.error('Error adding user:', err);
-                setModalError(err.response?.data?.msg || 'Failed to add user. Try again 🧯');
+                setModalError(err.response?.data?.msg || 'Failed to add user. Try again');
             } finally {
                 setIsAddingUser(false); // Clear loading state
             }
@@ -170,8 +170,6 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             </div>
         );
     };
-
-    // --- GivePointsModal Component (No changes needed here unless you want avatar in list) ---
     const GivePointsModal = ({ users, onClose, onPointsClaimed, refreshRankings }) => {
         const [claiming, setClaiming] = useState(false);
         const [modalMessage, setModalMessage] = useState('');

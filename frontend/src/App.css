@@ -182,7 +182,7 @@ button:disabled {
     justify-content: center;
     align-items: center;
     /* This background provides the color/tint over the avatar */
-    background: linear-gradient(135deg, rgba(255,215,0,0.6), rgba(247,197,2,0.6)); /* Default, overridden below */
+    /* background: linear-gradient(135deg, rgba(255,215,0,0.6), rgba(247,197,2,0.6)); */
     z-index: 1; /* Ensures overlay is on top of the background image */
 }
 
@@ -192,9 +192,6 @@ button:disabled {
     height: 160px;
     border-color: #FFEB3B; /* Gold border */
 }
-.top-user-card.rank-1 .rank-overlay {
-    background: linear-gradient(135deg, rgba(255,215,0,0.6), rgba(247,197,2,0.6)); /* Gold overlay */
-}
 
 /* Rank 2 Card: Silver */
 .top-user-card.rank-2 {
@@ -202,18 +199,12 @@ button:disabled {
     height: 140px;
     border-color: #D8D8D8; /* Silver border */
 }
-.top-user-card.rank-2 .rank-overlay {
-    background: linear-gradient(135deg, rgba(192,192,192,0.6), rgba(176,176,176,0.6)); /* Silver overlay */
-}
 
 /* Rank 3 Card: Bronze */
 .top-user-card.rank-3 {
     width: 140px;
     height: 140px;
     border-color: #E69D46; /* Bronze border */
-}
-.top-user-card.rank-3 .rank-overlay {
-    background: linear-gradient(135deg, rgba(205,127,50,0.6), rgba(181,108,43,0.6)); /* Bronze overlay */
 }
 
 /* --- Text Styling inside the circular cards (rank number) --- */
@@ -226,10 +217,6 @@ button:disabled {
     position: relative; /* Ensures z-index works */
 }
 
-/* Rank-specific text colors for better contrast */
-.top-user-card.rank-1 .rank-display { color: #8B4513; }
-.top-user-card.rank-2 .rank-display { color: #4A4A4A; }
-.top-user-card.rank-3 .rank-display { color: #8B4513; }
 
 .user-name-below {
     font-size: 1.1em;
