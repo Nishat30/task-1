@@ -70,8 +70,9 @@ function App() {
 
     // Main app content: user selection + leaderboard
     return (
+        <>
         <div className="app-container">
-            <h1>Leaderboard Application</h1>
+            <h1>Leaderboard</h1>
             <UserSelector
                 users={users}
                 onUserAdded={handleUserAdded}
@@ -81,6 +82,10 @@ function App() {
             <Leaderboard rankings={rankings} />
             
         </div>
+        <p className="footer">
+          © 2025| Made by Nishat Khanam 🤍   
+        </p>
+        </>
     );
 }
 

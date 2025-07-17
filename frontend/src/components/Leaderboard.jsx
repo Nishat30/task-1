@@ -3,7 +3,7 @@ import React from 'react';
 
 // Default avatar fallback
 const DEFAULT_AVATAR_PATH = '/assets/default_avatar.png'; // Ensure this path is correct relative to your public folder
-
+const CROWN_IMAGE_PATH = '/crown.png';
 const Leaderboard = ({ rankings }) => {
     // Find the top 3 users explicitly by their rank
     const rank1User = rankings.find(user => user.rank === 1);
@@ -40,6 +40,7 @@ const Leaderboard = ({ rankings }) => {
                         {rank1User && (
                             <div className="top-user-wrapper rank-1-wrapper ">
                                 {/* Avatar is now background of top-user-card */}
+                                <img src={CROWN_IMAGE_PATH} alt="Crown" className="crown-icon" />
                                 <div
                                     key={rank1User._id}
                                     className="top-user-card rank-1"
@@ -82,7 +83,7 @@ const Leaderboard = ({ rankings }) => {
                                     className="user-avatar-list" /* Class for smaller avatars in list */
                                 />
                                 <span className="name">{user.name}</span>
-                                <span className="points">{user.totalPoints} Points</span>
+                                <span className="points">{user.totalPoints}🏆</span>
                             </li>
                         ))}
                     </ul>
