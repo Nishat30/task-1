@@ -11,15 +11,15 @@ body {
     padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: flex-start; /* Keep body align-items as flex-start for main content */
     min-height: 100vh;
     box-sizing: border-box;
 }
 
 .app-container {
     background-color: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); */
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     padding: 20px;
@@ -191,7 +191,6 @@ button:disabled {
     width: 160px; /* Slightly larger for #1 */
     height: 160px;
     border-color: #FFEB3B; /* Gold border */
-    /* Remove `top:30px;` from here, it conflicts with flex alignment and transform */
 }
 .top-user-card.rank-1 .rank-overlay {
     background: linear-gradient(135deg, rgba(255,215,0,0.6), rgba(247,197,2,0.6)); /* Gold overlay */
@@ -202,7 +201,6 @@ button:disabled {
     width: 140px;
     height: 140px;
     border-color: #D8D8D8; /* Silver border */
-    /* Remove `top:10px;` */
 }
 .top-user-card.rank-2 .rank-overlay {
     background: linear-gradient(135deg, rgba(192,192,192,0.6), rgba(176,176,176,0.6)); /* Silver overlay */
@@ -213,7 +211,6 @@ button:disabled {
     width: 140px;
     height: 140px;
     border-color: #E69D46; /* Bronze border */
-    /* Remove `top:10px;` */
 }
 .top-user-card.rank-3 .rank-overlay {
     background: linear-gradient(135deg, rgba(205,127,50,0.6), rgba(181,108,43,0.6)); /* Bronze overlay */
@@ -295,20 +292,24 @@ button:disabled {
 
 
 /* --- Modal Styles --- */
+/* MODIFIED: Add backdrop-filter for blur and adjust background-color */
 .modal-overlay {
-    position: fixed;
+    position: fixed; /* Cover the entire viewport */
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background for tint */
+    backdrop-filter: blur(10px); /* Apply blur to the background behind the modal */
+    -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+    display: flex; /* Enable flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 1000; /* Ensure it's on top of all other page content */
+    /* overflow: hidden; Removed as max-height/overflow-y on modal-content handles scroll */
 }
 
+/* MODIFIED: Modal content (your "Add New User" box) */
 .modal-content {
     background-color: white;
     padding: 30px;
@@ -317,14 +318,22 @@ button:disabled {
     width: 90%;
     max-width: 450px;
     text-align: center;
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 15px;
     box-sizing: border-box;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 90vh; /* Ensure modal doesn't get too tall on small screens */
+    overflow-y: auto; /* Allows scrolling if content is too long */
+    z-index: 1001; /* Ensure it's above the modal-overlay */
+    animation: fadeIn 0.3s ease-out; /* Optional: Add a fade-in animation */
 }
+
+/* Optional: Animation for modal appearance */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 
 .modal-content h3 {
     margin-top: 0;
