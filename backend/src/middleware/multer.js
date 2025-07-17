@@ -1,47 +1,29 @@
+const cloudinary = require('cloudinary').v2;
+    const { CloudinaryStorage } = require('multer-storage-cloudinary');
+    const multer = require('multer');
 
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs'); // Import fs for directory creation
+    // Configure Cloudinary using environment variables
+    // These environment variables MUST be set in your Vercel project settings
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
 
-// Create a temporary directory if it doesn't exist
-const tempDir = './temp_uploads/';
-if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
-}
+    // Configure Cloudinary storage for Multer
+    const storage = new CloudinaryStorage({
+        cloudinary: cloudinary,
+        params: {
+            folder: 'leaderboard_avatars', // This is the folder name in your Cloudinary account
+            format: async (req, file) => 'png', // Force image format (e.g., png, jpg)
+            public_id: (req, file) => `avatar-${Date.now()}-${file.originalname.split('.')[0]}`, // Generate a unique public ID
+            // Optional: Add transformations for resizing/cropping on upload
+            transformation: [{ width: 150, height: 150, crop: 'fill', gravity: 'face' }]
+        },
+    });
 
-// Set storage engine for multer (temporary storage before Cloudinary upload)
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, tempDir); // Store files temporarily in this directory
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+    // Initialize Multer with Cloudinary storage
+    const upload = multer({ storage: storage });
 
-// Check file Type
-function checkFileType(file, cb) {
-    // Allowed file extensions
-    const filetypes = /jpeg|jpg|png|gif/;
-    // Check extension
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    // Check mime type
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
-    } else {
-        cb(new Error('Error: Images Only!'));
-    }
-}
-
-// Init upload
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
-    fileFilter: (req, file, cb) => {
-        checkFileType(file, cb);
-    }
-});
-
-module.exports = upload;
+    module.exports = upload;
+    
