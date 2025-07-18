@@ -24,8 +24,8 @@ const Leaderboard = ({ rankings }) => {
                                     <div className="rank-overlay">
                                     </div>
                                 </div>
-                                <h3 className="user-name-below">{rank2User.name}</h3>
-                                <p className="points-display-below">{rank2User.totalPoints} Points</p>
+                                <h3 className="user-name-below">#2 {rank2User.name}</h3>
+                                <p className="points-display-below">{rank2User.totalPoints} 🏆</p>
                             </div>
                         )}
 
@@ -40,8 +40,8 @@ const Leaderboard = ({ rankings }) => {
                                      <div className="rank-overlay">
                                     </div>
                                 </div>
-                                <h3 className="user-name-below">{rank1User.name}</h3>
-                                <p className="points-display-below">{rank1User.totalPoints} Points</p>
+                                <h3 className="user-name-below">#1 {rank1User.name}</h3>
+                                <p className="points-display-below">{rank1User.totalPoints} 🏆</p>
                             </div>
                         )}
 
@@ -55,8 +55,8 @@ const Leaderboard = ({ rankings }) => {
                                      <div className="rank-overlay">
                                     </div>
                                 </div>
-                                <h3 className="user-name-below">{rank3User.name}</h3>
-                                <p className="points-display-below">{rank3User.totalPoints} Points</p>
+                                <h3 className="user-name-below">#3 {rank3User.name}</h3>
+                                <p className="points-display-below">{rank3User.totalPoints} 🏆</p>
                             </div>
                         )}
                     </div>
