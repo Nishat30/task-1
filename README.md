@@ -81,14 +81,11 @@ cd backend
 Install dependencies:
 
 ```bash
-Copy
-Edit
 npm install
 ```
 Create a .env file in the backend directory and add:
 
 ```bash
-.env
 MONGODB_URI=your_mongodb_atlas_connection_string
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
@@ -113,14 +110,11 @@ cd frontend
 Install dependencies:
 
 ```bash
-Copy
-Edit
 npm install
 ```
 Create a .env file in the frontend directory and add:
 
-```bash
-.env
+```bssh
 NODE_ENV=development
 ```
 Run the frontend:
