@@ -1,21 +1,23 @@
-// frontend/src/App.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import UserSelector from "./components/UserSelector.jsx"; // Add .jsx
+import UserSelector from "./components/UserSelector.jsx";
 import Leaderboard from "./components/Leaderboard.jsx";
-import './App.css'; // Styling
+import './App.css';
+
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+    ? 'https://task-1-inky-one.vercel.app' 
+    : 'http://localhost:5000';
 
 function App() {
-    // State setup
-    const [users, setUsers] = useState([]); // List of users
-    const [rankings, setRankings] = useState([]); // Leaderboard data
-    const [loading, setLoading] = useState(true); // Loading status
-    const [error, setError] = useState(null); // Error handling
+    const [users, setUsers] = useState([]);
+    const [rankings, setRankings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Fetch users from backend
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/users');
+            const response = await axios.get(`${API_BASE_URL}/api/users`);
             setUsers(response.data);
         } catch (err) {
             console.error('Error fetching users:', err);
@@ -23,43 +25,37 @@ function App() {
         }
     }, []);
 
-    // Fetch rankings from backend
     const fetchRankings = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/rankings');
+            const response = await axios.get(`${API_BASE_URL}/api/rankings`);
             setRankings(response.data);
         } catch (err) {
             console.error('Error fetching rankings:', err);
             setError('Failed to load rankings.');
         } finally {
-            setLoading(false); // Done loading regardless of success/fail
+            setLoading(false);
         }
     }, []);
 
-    // Fetch users + rankings when app first loads
     useEffect(() => {
         fetchUsers();
         fetchRankings();
     }, [fetchUsers, fetchRankings]);
 
-    // Called when new user is added
     const handleUserAdded = () => {
-        fetchUsers();     // Refresh user list
-        fetchRankings();  // Update leaderboard
+        fetchUsers();
+        fetchRankings();
     };
 
-    // Called when user claims points
     const handlePointsClaimed = (updatedUser) => {
-        // Update just the changed user locally
         setUsers(prevUsers =>
             prevUsers.map(user =>
                 user._id === updatedUser._id ? updatedUser : user
             )
         );
-        fetchRankings(); // Re-calculate leaderboard
+        fetchRankings();
     };
 
-    // Show loading or error if needed
     if (loading) {
         return <div style={{ textAlign: 'center', marginTop: '50px' }}>Loading...</div>;
     }
@@ -68,23 +64,21 @@ function App() {
         return <div style={{ textAlign: 'center', marginTop: '50px', color: 'red' }}>Error: {error}</div>;
     }
 
-    // Main app content: user selection + leaderboard
     return (
         <>
-        <div className="app-container">
-            <h1>Leaderboard</h1>
-            <UserSelector
-                users={users}
-                onUserAdded={handleUserAdded}
-                onPointsClaimed={handlePointsClaimed}
-                refreshRankings={fetchRankings}
-            />
-            <Leaderboard rankings={rankings} />
-            
-        </div>
-        <p className="footer">
-          © 2025| Made by Nishat Khanam 🤍   
-        </p>
+            <div className="app-container">
+                <h1>Leaderboard</h1>
+                <UserSelector
+                    users={users}
+                    onUserAdded={handleUserAdded}
+                    onPointsClaimed={handlePointsClaimed}
+                    refreshRankings={fetchRankings}
+                />
+                <Leaderboard rankings={rankings} />
+            </div>
+            <p className="footer">
+                © 2025| Made by Nishat Khanam 🤍
+            </p>
         </>
     );
 }
