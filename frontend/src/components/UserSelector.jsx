@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+    ? 'https://task-1-inky-one.vercel.app' 
+    : 'http://localhost:5000';
 const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) => {
     // State for managing modal visibility
     const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -83,7 +85,7 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             setIsAddingUser(true); // Set loading state
 
             try {
-                const userResponse = await axios.post('http://localhost:5000/api/users', { name: newUserName.trim() });
+                const userResponse = await axios.post(`${API_BASE_URL}/api/users`, { name: newUserName.trim() });
                 const newUser = userResponse.data;
 
                 let avatarUploaded = false;
@@ -92,7 +94,7 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
                     formData.append('avatar', selectedAvatar);
 
                     try {
-                        await axios.post(`http://localhost:5000/api/users/${newUser._id}/avatar`, formData, {
+                        await axios.post(`${API_BASE_URL}/api/users/${newUser._id}/avatar`, formData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data',
                             },
@@ -183,7 +185,7 @@ const UserSelector = ({ users, onUserAdded, onPointsClaimed, refreshRankings }) 
             setModalMessage('');
             setClaiming(true);
             try {
-                const response = await axios.post(`http://localhost:5000/api/claim-points/${userId}`);
+                const response = await axios.post(`${API_BASE_URL}/api/claim-points/${userId}`);
                 setModalMessage(`Awarded ${response.data.pointsAwarded} points to ${userName}! 🎉`);
                 onPointsClaimed(response.data.user);
                 refreshRankings(); 
