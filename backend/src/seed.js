@@ -9,7 +9,7 @@ const usersToSeed = [
     { name: 'Salar', totalPoints: 42, avatar: 'https://randomuser.me/api/portraits/men/3.jpg' },
     { name: 'Zara', totalPoints: 250, avatar: 'https://randomuser.me/api/portraits/women/3.jpg' },
     { name: 'Minhaj', totalPoints: 392, avatar: 'https://randomuser.me/api/portraits/men/4.jpg' },
-    { name: 'Asad', totalPoints: 892, avatar: 'https://randomuser.me/api/portraits/men/5.jpg' },
+    { name: 'Azan', totalPoints: 892, avatar: 'https://randomuser.me/api/portraits/men/5.jpg' },
     { name: 'Raj', totalPoints: 932, avatar: 'https://randomuser.me/api/portraits/men/6.jpg' },
     { name: 'Om', totalPoints: 10, avatar: 'https://randomuser.me/api/portraits/men/7.jpg' }
 ];
